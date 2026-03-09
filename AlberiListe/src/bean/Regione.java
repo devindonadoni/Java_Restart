@@ -83,5 +83,8 @@ public class Regione {
 		this.province = province;
 	}
 	
-	
+	public String toString() {
+	    return "Provincia: " + nome + " | Regione: " + regione + "  Codice: " + codice + " | " +" (Sigla: " + sigla + ", Capoluogo: " + capoluogo + " Abitanti: " + abitanti + " )" +
+	    		"\n \tCitta' importanti: [" + province[0] + ", " + province[1] + ", " + province[2] + "]";
+	}
 }
