@@ -1,0 +1,3 @@
+file_ordine     = ordine.txt
+costo_taglio    = 0.00015
+costo_materiale = 0.006
