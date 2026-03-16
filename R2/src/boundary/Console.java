@@ -15,10 +15,10 @@ public class Console {
 	
 	
 	public void execute() {
-		biz.populateList();
-		//biz.printList();
+		biz.populateAllOrderList();
 		
 		biz.printSummary();
+		//biz.printList();
 		
 	}
 
