@@ -5,10 +5,18 @@ import java.util.List;
 
 import bean.Ordine;
 import bean.Pezzo;
-import bean.Pezzo.Forma;
 import util.FileUtil;
 
 public class Biz {
+	//************************************************
+    private FormaElaborataEventListener formaElaborataListener;
+    private RiepilogoEventListener riepilogoEventListener;
+
+    public void setFormaElaborataListener(FormaElaborataEventListener l) { this.formaElaborataListener = l; }
+    public void setRiepilogoEventListener(RiepilogoEventListener l) { this.riepilogoEventListener = l; }
+	//************************************************
+
+	
 	ArrayList<Ordine> arrayListOrdini = new ArrayList<Ordine>();
 	private String pathFile;
 	private float costoTaglio;
@@ -73,44 +81,58 @@ public class Biz {
 		
 	}
 	
-	public void printList() {
-		for(Ordine item : arrayListOrdini) {
-			System.out.println("Numero Ordine" + item.getNumeroOrdine());
-			for(Pezzo var : item.getListaPezzi()) {
-				System.out.println(var.toString());
-			}
-		}
-	}
-	
 	
 	//SUMMARY PRINT ORDER PER ORDER
 	public void printSummary() {
 		for(Ordine ordine : arrayListOrdini) {
-			System.out.println("========================================");
-			System.out.println("\tORDINE: " + ordine.getNumeroOrdine());
-			System.out.println("========================================");
 			mergeListSingleOrder(ordine);
-			System.out.println("----------------------------------------");
 		}
 	}
 	
 	//PRINT ONLY THE GIVEN ORDER OBJECT
 	public void mergeListSingleOrder(Ordine ordine) {
-		Forma last = null;
-		for(Pezzo toCheckPezzo : ordine.getListaPezzi()) {
-			int n = 0;
-			for(Pezzo pezzo : ordine.getListaPezzi()) {
-				if(toCheckPezzo.getForma() == pezzo.getForma() && toCheckPezzo.getDimensione() == pezzo.getDimensione()) {
-					n ++;
-				}
-			}
-			if(last != toCheckPezzo.getForma()) {
-				System.out.println(toCheckPezzo.getForma() + " " + toCheckPezzo.getDimensione() + " " + n);
-			}
-			last = toCheckPezzo.getForma();
-		}
+		float costoTaglio = 0;
+	    String ultimaFormaRilevata = ""; 
+	    int i = 0;
+	    int pezziTotali = 0;
+	    int materialeTotale = 0;
+	    int perimetroTotale = 0;
+	    int costoTotale = 0;
+
+	    for (Pezzo toCheckPezzo : ordine.getListaPezzi()) {
+	        int n = 0;
+	        String formaCorrente = toCheckPezzo.getForma().getNome(); 
+
+	        for (Pezzo pezzo : ordine.getListaPezzi()) {
+	            if (formaCorrente.equals(pezzo.getForma().getNome()) && 
+	                toCheckPezzo.getDimensione() == pezzo.getDimensione()) {
+	                n++;
+	            }
+	        }
+
+	        if (!ultimaFormaRilevata.equals(formaCorrente)) {
+	        	double area = toCheckPezzo.getForma().getArea(toCheckPezzo.getDimensione());
+	        	double perimetro = toCheckPezzo.getForma().getPerimetro(toCheckPezzo.getDimensione());
+	        	
+	        	
+	        	formaElaborataListener.onFormaElaborata(ordine.getNumeroOrdine(), toCheckPezzo, area, perimetro, i, i, n);
+	            i++;
+                pezziTotali += n;
+                perimetroTotale += perimetro;
+                materialeTotale += area;
+	        }
+	        
+	        ultimaFormaRilevata = formaCorrente;
+	    }
+	    if (riepilogoEventListener != null) {
+	        riepilogoEventListener.onRiepilogo(
+	            ordine.getNumeroOrdine(), 
+	            pezziTotali, 
+	            materialeTotale, 
+	            perimetroTotale, 
+	            costoTotale
+	        );
+	    }
 	}
-	
-	
 	
 }
