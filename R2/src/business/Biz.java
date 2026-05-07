@@ -115,8 +115,18 @@ public class Biz {
 	        	double perimetro = toCheckPezzo.getForma().getPerimetro(toCheckPezzo.getDimensione());
 	        	
 	        	
+	        	
+	        	
+	        	
 	        	formaElaborataListener.onFormaElaborata(ordine.getNumeroOrdine(), toCheckPezzo, area, perimetro, i, i, n);
-	            i++;
+	            
+	        	
+	        	
+	        	
+	        	
+	        	
+	        	
+	        	i++;
                 pezziTotali += n;
                 perimetroTotale += perimetro;
                 materialeTotale += area;
